@@ -68,15 +68,13 @@ To test the Gesture Particle Engine, follow these steps:
 📸 Screenshots
 ================
 ### Desktop View
-![Desktop Screenshot](<img width="1916" height="904" alt="1  Desktop View" src="https://github.com/user-attachments/assets/5411724f-b7dc-4cc3-9d4e-a3181c396574" />)
+<img src="https://github.com/user-attachments/assets/5411724f-b7dc-4cc1-9d4e-a1101c196574" alt="Desktop View" width="100%">
 
 ### Action View
-![Action Screenshot](<img width="1919" height="899" alt="2  Action View" src="https://github.com/user-attachments/assets/7dd273c7-ec5f-42dd-bc4f-1e888ce418bb" />)
-
-
+<img src="https://github.com/user-attachments/assets/7dd273c7-ec5f-42dd-bc4f-1e888ce418bb" alt="Action View" width="100%">
 
 ### Mobile View
-![Mobile Screenshot](![3  Mobile View](https://github.com/user-attachments/assets/a5bd6d28-88ac-479d-a637-338d4acb9ec7)
+<img src="https://github.com/user-attachments/assets/a5bd6d28-88ac-479d-a637-338d4acb9ec7" alt="Mobile Screenshot" width="300">
 
 
 
