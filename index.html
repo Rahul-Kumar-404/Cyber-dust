@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gesture Particle Engine</title>
+    
+    <link rel="icon" type="image/png" href="./assets/favicon.ico">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="./styles/style.css">
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+    
+    <video id="input_video" style="display:none" playsinline></video>
+    
+    <div class="hud-panel">
+        
+        <div class="hud-header">
+            <div class="title-group">
+                <h1>Particle Engine</h1>
+                <div class="shape-info">
+                    <span id="shape-name" class="glow">SPHERE</span>
+                </div>
+            </div>
+            
+            <div class="status-pill">
+                <span id="camera-status" class="status-dot inactive"></span>
+                <span id="status-text">Inactive</span>
+            </div>
+        </div>
+        
+        <div class="controls-row">
+            <div class="control-mini">
+                <span class="icon">🖐</span>
+                <span>Attract</span>
+            </div>
+            <div class="control-mini">
+                <span class="icon">✊</span>
+                <span>Repel</span>
+            </div>
+            <div class="control-mini">
+                <span class="icon">✌️</span>
+                <span>Switch</span>
+            </div>
+        </div>
+        
+        <div class="footer-row">
+            <p class="creator-label">Developer: <span>Rahul Kumar</span></p>
+            
+            <div class="social-links">
+                <a href="https://github.com/Rahul-Kumar-404" target="_blank" class="social-btn github">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                
+                <a href="https://www.linkedin.com/in/rahul-kumar-404" target="_blank" class="social-btn linkedin">
+                    <i class="fa-brands fa-linkedin-in"></i>
+                </a>
+
+                <a href="https://www.instagram.com/marcus_the_darcus" target="_blank" class="social-btn insta">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+
+                <a href="https://www.facebook.com/TH3.D3V1L.K1NG/" target="_blank" class="social-btn facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <a href="https://x.com/rahul_kumar_404/" target="_blank" class="social-btn x">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./scripts/script.js"></script>
+</body>
+</html>
