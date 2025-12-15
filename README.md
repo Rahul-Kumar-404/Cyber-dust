@@ -68,7 +68,7 @@ To test the Gesture Particle Engine, follow these steps:
 📸 Screenshots
 ================
 ### Desktop View
-<img src=""src="https://github.com/user-attachments/assets/7fd0228a-2df3-4d06-9991-934f63602962" /> alt="Desktop View" width="100%">
+<img src="https://github.com/user-attachments/assets/7fd0228a-2df3-4d06-9991-934f63602962" alt="Desktop View" width="100%">
 
 ### Action View
 <img src="https://github.com/user-attachments/assets/7dd273c7-ec5f-42dd-bc4f-1e888ce418bb" alt="Action View" width="100%">
