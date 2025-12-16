@@ -25,7 +25,7 @@ body {
     pointer-events: none; 
 }
 
-/* --- HUD Panel (Desktop Default: Bottom Left) --- */
+/* --- HUD Panel --- */
 .hud-panel {
     position: absolute;
     top: auto;
@@ -127,9 +127,16 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 6px;
+    border-radius: 12px;
+    padding: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
-.control-mini .icon { font-size: 1.4rem; }
+.control-mini .icon { 
+    font-size: 1.4rem; 
+    transition: color 0.2s ease;
+}
 .control-mini span { font-size: 0.7rem; color: rgba(255,255,255,0.7); }
 
 /* --- Footer Section --- */
@@ -178,43 +185,33 @@ body {
 .social-btn.facebook:hover { background: #1877F2; border-color: #fff; transform: translateY(-3px); box-shadow: 0 0 15px rgba(24, 119, 242, 0.4); }
 .social-btn.x:hover { background: #000; border-color: #fff; transform: translateY(-3px); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
 
-/* --- MOBILE OPTIMIZATION (Bottom Center Card) --- */
+/* --- MOBILE OPTIMIZATION --- */
 @media (max-width: 768px) {
     .hud-panel {
-        /* Position: Bottom Center - Lowered down */
         top: auto;
         left: 50%;
-        bottom: 10px; /* Reduced from 20px to 10px to sit lower */
+        bottom: 10px; 
         right: auto;
         transform: translateX(-50%);
-        
-        /* Card Appearance */
         width: 85%;
         max-width: 380px;
-        padding: 12px; /* Slightly reduced padding */
+        padding: 12px; 
         gap: 10px;
         border-radius: 24px;
-        
         background: rgba(12, 12, 12, 0.85);
         backdrop-filter: blur(20px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-
-    /* Compact Fonts */
     .title-group h1 { font-size: 0.9rem; }
     .shape-info { font-size: 0.65rem; }
     .status-pill { font-size: 0.6rem; padding: 3px 7px; }
-    
     .controls-row { padding: 8px; }
     .control-mini .icon { font-size: 1.2rem; }
-    
-    /* Footer Layout: Stacked (Vertical) on Mobile */
     .footer-row { 
         flex-direction: column; 
         gap: 8px;
         padding-top: 8px; 
     }
-    
     .creator-label { font-size: 0.75rem; }
     .social-btn { width: 34px; height: 34px; font-size: 1rem; }
     .social-links { gap: 10px; }

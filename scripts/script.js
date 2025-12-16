@@ -4,9 +4,8 @@ import * as THREE from 'three';
 const isMobile = window.innerWidth < 768;
 
 // --- CONFIGURATION ---
-// Mobile par particles kam rakhenge taaki lag na ho (Performance Fix)
 const PARTICLE_COUNT = isMobile ? 6000 : 15000;
-const PARTICLE_SIZE = isMobile ? 0.12 : 0.08; // Mobile par thode bade particles
+const PARTICLE_SIZE = isMobile ? 0.12 : 0.08;
 const CAM_Z = 30;
 
 // --- GLOBALS ---
@@ -25,7 +24,6 @@ let lastShapeSwitchTime = 0;
 // --- INITIALIZATION ---
 initThree();
 
-// Check for Camera Support
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     initMediaPipe();
 } else {
@@ -35,6 +33,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
 animate();
 
+// --- UI HELPERS ---
 function updateStatusText(text, isActive = false) {
     const statusDot = document.getElementById('camera-status');
     const statusText = document.getElementById('status-text');
@@ -50,6 +49,32 @@ function updateStatusText(text, isActive = false) {
     }
 }
 
+function highlightControl(mode) {
+    const controls = document.querySelectorAll('.control-mini');
+    
+    // Reset all controls
+    controls.forEach(c => {
+        c.style.background = 'transparent';
+        c.style.border = '1px solid transparent';
+        c.style.transform = 'scale(1)';
+        c.querySelector('.icon').style.color = 'white';
+    });
+
+    let index = -1;
+    if (mode === 'attract') index = 0; // Hand
+    else if (mode === 'repel') index = 1; // Fist
+    else if (mode === 'switch') index = 2; // Victory
+
+    // Highlight specific control
+    if (index !== -1 && controls[index]) {
+        controls[index].style.background = 'rgba(0, 255, 204, 0.15)'; 
+        controls[index].style.border = '1px solid rgba(0, 255, 204, 0.4)';
+        controls[index].style.transform = 'scale(1.05)';
+        controls[index].querySelector('.icon').style.color = '#00ffcc';
+    }
+}
+
+// --- THREE.JS LOGIC ---
 function initThree() {
     const container = document.getElementById('canvas-container');
     
@@ -61,7 +86,7 @@ function initThree() {
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio); // Sharpness fix
+    renderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(renderer.domElement);
 
     geometry = new THREE.BufferGeometry();
@@ -190,19 +215,17 @@ function animate() {
     const positionsArray = positionAttribute.array;
 
     // --- RESPONSIVE HAND MAPPING ---
-    // Mobile needs different sensitivity because aspect ratio is inverted
     let sensitivityX = -40;
     let sensitivityY = -30;
     
     if (isMobile) {
-        sensitivityX = -25; // Less horizontal range on mobile
-        sensitivityY = -35; // More vertical range on mobile
+        sensitivityX = -25;
+        sensitivityY = -35;
     }
 
     const handX = (handPosition.x - 0.5) * sensitivityX;
     const handY = (handPosition.y - 0.5) * sensitivityY;
     
-    // Shift hand INTERACTION UP on mobile to match the visual particle shift
     let visualYOffset = 0;
     if (isMobile) visualYOffset = 5; 
 
@@ -221,7 +244,6 @@ function animate() {
         let ty = targetPositions[iy];
         let tz = targetPositions[iz];
 
-        // Slower animation speed on mobile for smoothness
         const timeFactor = isMobile ? 0.005 : 0.01;
         const speed = 0.03 + (Math.sin(i + performance.now() * 0.001) * timeFactor);
         
@@ -229,7 +251,7 @@ function animate() {
         py += (ty - py) * speed;
         pz += (tz - pz) * speed;
 
-        if (isHandDetected) {
+        if (isHandDetected && gestureMode !== 'neutral') {
             const dx = px - handVec.x;
             const dy = py - handVec.y;
             const dz = pz - handVec.z;
@@ -268,7 +290,6 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     
-    // Shift Particles UP on Mobile (so they are visible above bottom panel)
     if (window.innerWidth < 768) {
         if(particles) particles.position.y = 5;
     } else {
@@ -276,6 +297,7 @@ function onWindowResize() {
     }
 }
 
+// --- MEDIAPIPE LOGIC ---
 function initMediaPipe() {
     const videoElement = document.getElementById('input_video');
     const hands = new Hands({locateFile: (file) => {
@@ -284,8 +306,8 @@ function initMediaPipe() {
 
     hands.setOptions({
         maxNumHands: 1,
-        modelComplexity: isMobile ? 0 : 1, // Lite model for mobile (Faster)
-        minDetectionConfidence: 0.5, // Lower confidence needed for mobile
+        modelComplexity: isMobile ? 0 : 1,
+        minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5
     });
 
@@ -295,9 +317,9 @@ function initMediaPipe() {
         onFrame: async () => {
             await hands.send({image: videoElement});
         },
-        width: isMobile ? 480 : 640,  // Lower resolution processing on mobile
+        width: isMobile ? 480 : 640,
         height: isMobile ? 360 : 480,
-        facingMode: 'user' // Force front camera
+        facingMode: 'user'
     });
     
     cameraUtils.start().catch(e => {
@@ -316,34 +338,57 @@ function onResults(results) {
         isHandDetected = true;
         const landmarks = results.multiHandLandmarks[0];
         
-        // Use Index Finger Tip (8) or Middle of Palm (9)
         handPosition.set(landmarks[9].x, landmarks[9].y, 0);
 
-        // Gesture Logic
-        const isVictory = landmarks[8].y < landmarks[5].y && 
-                          landmarks[12].y < landmarks[9].y && 
-                          landmarks[16].y > landmarks[13].y && 
-                          landmarks[20].y > landmarks[17].y;
+        // --- GESTURE LOGIC ---
+
+        // Check if fingers are Open
+        const isIndexOpen = landmarks[8].y < landmarks[6].y;
+        const isMiddleOpen = landmarks[12].y < landmarks[10].y;
+        const isRingOpen = landmarks[16].y < landmarks[14].y;
+        const isPinkyOpen = landmarks[20].y < landmarks[18].y;
+
+        // Fist Logic (All tips close to wrist)
+        const getDist = (idx) => Math.hypot(landmarks[idx].x - landmarks[0].x, landmarks[idx].y - landmarks[0].y);
+        const fistThreshold = isMobile ? 0.25 : 0.3;
+        const isFist = getDist(8) < fistThreshold && 
+                       getDist(12) < fistThreshold && 
+                       getDist(16) < fistThreshold && 
+                       getDist(20) < fistThreshold;
+
+        // Victory Logic (Index & Middle Open, others Closed)
+        const isVictory = isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen;
         
-        const dWristTip = Math.hypot(landmarks[8].x - landmarks[0].x, landmarks[8].y - landmarks[0].y);
-        // Fist detection threshold adjusted slightly
-        const isFist = dWristTip < (isMobile ? 0.15 : 0.2); 
+        // Open Hand Logic (All Open)
+        const isOpenHand = isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen;
 
         const now = Date.now();
-        if (isVictory) {
+
+        // --- PRIORITY ---
+        if (isFist) {
+            gestureMode = 'repel';
+            highlightControl('repel');
+        } 
+        else if (isVictory) {
+            highlightControl('switch');
             if (now - lastShapeSwitchTime > 2000) {
                 currentShapeIndex = (currentShapeIndex + 1) % shapes.length;
                 generateShape(shapes[currentShapeIndex]);
                 lastShapeSwitchTime = now;
                 gestureMode = 'neutral';
             }
-        } else if (isFist) {
-            gestureMode = 'repel';
-        } else {
+        } 
+        else if (isOpenHand) {
             gestureMode = 'attract';
+            highlightControl('attract');
+        } 
+        else {
+            gestureMode = 'neutral';
+            highlightControl('none');
         }
 
     } else {
         isHandDetected = false;
+        highlightControl('none');
     }
 }
